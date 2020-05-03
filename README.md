@@ -2,6 +2,12 @@
 
 Interleave 2 byte streams with default payload fallback when one stream is shorter than the other.
 
+```
+damascus stream0 stream1 default
+```
+
+![schema](damascus.png)
+
 ## Example
 
 with files:
