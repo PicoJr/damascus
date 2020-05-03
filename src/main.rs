@@ -2,6 +2,7 @@ use itertools::{EitherOrBoth, Itertools};
 use std::fs::File;
 use std::io;
 use std::io::{BufRead, BufReader, BufWriter, Read, Write};
+use std::iter::once;
 use structopt::StructOpt;
 
 pub struct BufChunks<'a, R>
@@ -61,23 +62,15 @@ fn main() -> io::Result<()> {
     let chunks0 = BufChunks::new(bufreader0, buffer0.as_mut_slice());
     let chunks1 = BufChunks::new(bufreader1, buffer1.as_mut_slice());
     let zipped = chunks0.zip_longest(chunks1);
+    let flattened = zipped.flat_map(|either_or_both| match either_or_both {
+        EitherOrBoth::Both(left, right) => once(left).chain(once(right)),
+        EitherOrBoth::Left(left) => once(left).chain(once(default.clone())),
+        EitherOrBoth::Right(right) => once(default.clone()).chain(once(right)),
+    });
     let stdout = io::stdout();
     let mut handle = BufWriter::new(stdout.lock());
-    for zip in zipped {
-        match zip {
-            EitherOrBoth::Both(left, right) => {
-                handle.write_all(left.as_slice())?;
-                handle.write_all(right.as_slice())?;
-            }
-            EitherOrBoth::Left(left) => {
-                handle.write_all(left.as_slice())?;
-                handle.write_all(default.as_slice())?;
-            }
-            EitherOrBoth::Right(right) => {
-                handle.write_all(default.as_slice())?;
-                handle.write_all(right.as_slice())?;
-            }
-        };
+    for packet in flattened {
+        handle.write_all(packet.as_slice())?;
     }
     Ok(())
 }

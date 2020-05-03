@@ -26,7 +26,6 @@ mkfifo /tmp/fifo2
 head -c 1K < /dev/zero > /tmp/default
 seq 10000000 > /tmp/fifo1 &
 seq 10000000 > /tmp/fifo2 &
-cargo run --release /tmp/fifo1 /tmp/fifo2 /tmp/default | pv > /dev/null
 ```
 
 > payload size = 1KB
