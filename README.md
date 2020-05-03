@@ -54,3 +54,10 @@ Note: payload size (i.e. `default` size) massively impacts throughput:
 | 64 bytes          |  1018MiB/s |
 | 500 bytes         |  1.25GiB/s |
 | 1KB               |  1.35GiB/s |
+
+## License
+
+This software is distributed under the terms of both the MIT license and the Apache License (Version 2.0):
+
+* [LICENSE-APACHE](LICENSE-APACHE)
+* [LICENSE-MIT](LICENSE-MIT)
